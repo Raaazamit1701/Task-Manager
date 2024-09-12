@@ -268,7 +268,7 @@ app.post('/register', async (req, res) => {
 // Local login route
 app.post(
   '/login',
-  passport.authenticate('local', {
+  passport('local', {
     failureRedirect: "",
   }),
   (req, res) => {
