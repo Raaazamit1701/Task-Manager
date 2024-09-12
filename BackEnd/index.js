@@ -211,7 +211,7 @@ const PORT = 8080;
 const app = express();
 app.use([
   cors({
-    origin: ["http://localhost:3000","https://task-manager-nndypglmy-raaazamit1701s-projects.vercel.app"],
+    origin: ["http://localhost:3000","https://task-manager-nndypglmy-raaazamit1701s-projects.vercel.app/"],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   }),
