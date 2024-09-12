@@ -223,20 +223,21 @@ const sessionStore = new MongoStore({
   mongoUrl: process.env.MONGO_URL,
   collectionName: 'session',
 });
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    store: sessionStore,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: true,
+//     saveUninitialized: true,
+//     store: sessionStore,
+//     cookie: {
+//       maxAge: 1000 * 60 * 60 * 24,
+//     },
+//   })
+// );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
+  app.use(session({store:sessionStore}))
 
 app.get('/', (req, res) => {
   res.json('Hello');
@@ -349,8 +350,8 @@ const authenticator = (req, res, next) => {
     // }
     next();
   };
-  app.use("/todo", [authenticator, TodoRoutes]);
-  app.use("/note", [authenticator, NoteRoutes]);
+  app.use("/todo",  TodoRoutes);
+  app.use("/note",  NoteRoutes);
   app.use("/task", TaskRoutes);
 
 // Start the server

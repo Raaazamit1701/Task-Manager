@@ -2,11 +2,11 @@ const taskRoutes = require("express").Router();
 const dataModel = require("../Models/DataModel");
 
 taskRoutes.get("/getTask", async (req, res) => {
-  const { _id } = req.user;
+  // const { _id } = req.user;
   const newTask = new dataModel({
     _id: _id,
   });
-  let task = await dataModel.findById(_id);
+  let task = await dataModel.find();
   if (!task) task = await newTask.save();
   console.log(task.tasks);
   res.json(task.tasks);
