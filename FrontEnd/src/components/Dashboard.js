@@ -14,13 +14,13 @@ const Dashboard = ({ notes, setNotes, tasks, setTasks, todo, setTodo }) => {
   }, []);
 
   function expandTodo() {
-    navigate("/Home/todos");
+    // navigate("/Home/todos");
   }
   function expandTask() {
     navigate("/Home/task");
   }
   function expandNote() {
-    navigate("/Home/notes");
+    // navigate("/Home/notes");
   }
 
   return (
@@ -31,14 +31,14 @@ const Dashboard = ({ notes, setNotes, tasks, setTasks, todo, setTodo }) => {
       <main className="body-content ">
         <div className="notes" data-aos="fade-up-right">
           <div className="con-head">
-            <p>Notes</p>
-            <button onClick={expandNote} id="all">
+            <p>Tasks</p>
+            <button onClick={expandTask} id="all">
               <AiOutlineArrowsAlt color="#F1EAFF" size={18} />
             </button>
           </div>
           <MainNote notes={notes} setNotes={setNotes} />
         </div>
-        <div className="todos" data-aos="fade-up-left">
+        {/* <div className="todos" data-aos="fade-up-left">
           <div className="con-head">
             <p>Todo's</p>
             <button onClick={expandTodo} id="all">
@@ -55,7 +55,7 @@ const Dashboard = ({ notes, setNotes, tasks, setTasks, todo, setTodo }) => {
             </button>
           </div>
           <MainTask tasks={tasks} setTasks={setTasks} />
-        </div>
+        </div> */}
       </main>
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { AiFillDelete } from "react-icons/ai";
 import { BiSearchAlt2 } from "react-icons/bi";
 import "./styles/task.css";
 import Aos from "aos";
@@ -11,107 +10,88 @@ const Task = ({ toast, tasks, setTasks }) => {
   const [completedTasks, setCompletedTasks] = useState([]);
   const [task, setTask] = useState({
     taskName: "",
-    priority: "",
-    deadline: "",
+    frequency: "", // Frequency in terms of days or other format
+    status: "pending", // Default status set to 'pending'
+    deadline: "", // Date to complete the task by
   });
 
-  axios.defaults.withCredentials = true;
+  // Fetch tasks from the API when component is mounted
   useEffect(() => {
     Aos.init({ duration: 1000 });
     axios
-      .get(`https://task-manager-axhd.onrender.com/task/getTask`)
+      .get(`https://task-manager-axhd.onrender.com/getTask`)
       .then((res) => {
-        let temp = res.data.filter((obj) => obj.done);
+        let completed = res.data.filter((obj) => obj.status === "completed");
         setTasks(res.data);
-        setCompletedTasks(temp);
+        setCompletedTasks(completed);
       })
       .catch((err) => console.log(err));
   }, [setTasks]);
 
-  function handleOnchange(e) {
-    e.preventDefault();
+  // Handle changes in the task input fields
+  const handleOnchange = (e) => {
     setTask({
       ...task,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
-  const addTask = () => {
-    if (task.taskName.trim() === "" || task.deadline === "") {
-      toast.error("Please enter task and deadline");
+  // Add a new task
+  const addTask = (e) => {
+    if (!task.taskName.trim() || !task.frequency || !task.deadline) {
+      toast.error("Please enter task name, frequency, and deadline");
       return;
     }
     const selectedDate = new Date(task.deadline);
     const currentDate = new Date();
     if (selectedDate <= currentDate) {
-      toast.error("Please select a valid date");
+      toast.error("Please select a future date");
       return;
     }
+
     const newTask = {
-      id: crypto.randomUUID(),
-      task,
-      done: false,
+      taskName: task.taskName,
+      frequency: task.frequency,
+      status: task.status,
+      deadline: task.deadline,
     };
-    console.log(newTask);
 
     axios
-      .post(`https://task-manager-axhd.onrender.com/task/postTask`, newTask)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-
-    setTasks([...tasks, newTask]);
-    toast.success("Added Successfully");
-    setTask({ taskName: "", priority: "top", deadline: "" });
-  };
-
-  const addToComplete = (id) => {
-    const updatedTasks = tasks.map((eachTask) =>
-      eachTask.id === id ? { ...eachTask, done: true } : eachTask
-    );
-    setTasks(updatedTasks);
-    axios
-      .patch(`https://task-manager-axhd.onrender.com/task/updateTask/${id}`, {
-        done: true,
+      .post(`https://task-manager-axhd.onrender.com/postTask`, newTask)
+      .then((res) => {
+        toast.success("Task added successfully");
+        setTasks([...tasks, res.data]);
+        setTask({ taskName: "", frequency: "", status: "pending", deadline: "" });
       })
-      .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
-
-    const completed = tasks.find((eachTask) => eachTask.id === id);
-    if (completed) setCompletedTasks([...completedTasks, completed]);
   };
 
-  const removeTask = (id) => {
-    axios
-      .delete(`https://task-manager-axhd.onrender.com/task/deleteTask/${id}`)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
+  // Mark a task as completed
 
-    setTasks(tasks.filter((eachTask) => id !== eachTask.id));
-    setCompletedTasks(completedTasks.filter((eachTask) => id !== eachTask.id));
-  };
 
-  const upcomingTasks = tasks.filter((eachTask) => !eachTask.done);
+  // Remove a task
 
+  // Filter upcoming tasks based on their status
+  const upcomingTasks = tasks.filter((task) => task.status !== "completed");
+
+  // Filter tasks by search query for displaying current tasks
   const comingFilteredItems = useMemo(() => {
-    return upcomingTasks.filter((eachItem) => {
-      return eachItem.task.taskName
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-    });
+    return upcomingTasks.filter((task) =>
+      task.taskName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   }, [upcomingTasks, searchQuery]);
 
+  // Filter completed tasks by search query
   const comingCompletedItems = useMemo(() => {
-    return completedTasks.filter((eachItem) => {
-      return eachItem.task.taskName
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-    });
+    return completedTasks.filter((task) =>
+      task.taskName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   }, [searchQuery, completedTasks]);
 
   return (
-    <div className="home-body-conatiner" data-aos="zoom-in">
+    <div className="home-body-container" data-aos="zoom-in">
       <header className="search-bar">
-        <h1>Task's</h1>
+        <h1>Task</h1>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -125,59 +105,47 @@ const Task = ({ toast, tasks, setTasks }) => {
       <div className="add-div">
         <input
           type="text"
-          placeholder="Enter task"
+          placeholder="Enter task name"
           name="taskName"
-          value={task.taskName || ""}
-          onChange={(e) => handleOnchange(e)}
+          value={task.taskName}
+          onChange={handleOnchange}
         />
-        <select
-          name="priority"
-          placeholder="Select Priority"
-          value={task.priority}
-          onChange={(e) => handleOnchange(e)}
-        >
-          <option value="top">Top priority</option>
-          <option value="average">Average priority</option>
-          <option value="low">Low priority</option>
-        </select>
+        <input
+          type="text"
+          placeholder="Enter frequency"
+          name="frequency"
+          value={task.frequency}
+          onChange={handleOnchange}
+        />
         <input
           type="date"
           name="deadline"
           value={task.deadline}
-          onChange={(e) => handleOnchange(e)}
+          onChange={handleOnchange}
         />
         <button id="add-bt" onClick={addTask}>
           Add
         </button>
       </div>
       <main className="task-body" data-aos="zoom-out">
-        <h3>current tasks</h3>
+        <h3>Current tasks</h3>
         <div className="cur-task-list" data-aos="zoom-in">
           <table>
             <thead>
               <tr>
-                <th>name</th>
-                <th>Prioriy</th>
-                <th>deadline</th>
-                <th>action</th>
+                <th>Name</th>
+                <th>Frequency</th>
+                <th>Deadline</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {comingFilteredItems.map((eachTask) => (
-                <tr key={eachTask.id}>
-                  <td>{eachTask.task.taskName}</td>
-                  <td>{eachTask.task.priority}</td>
-                  <td>{eachTask.task.deadline}</td>
-                  <td>
-                    {!eachTask.done && (
-                      <button
-                        id="done-bt"
-                        onClick={() => addToComplete(eachTask.id)}
-                      >
-                        done
-                      </button>
-                    )}
-                  </td>
+              {comingFilteredItems.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.taskName}</td>
+                  <td>{task.frequency}</td>
+                  <td>{task.deadline}</td>
+                  <td>{task.status}</td> {/* Show task status */}
                 </tr>
               ))}
             </tbody>
@@ -188,25 +156,23 @@ const Task = ({ toast, tasks, setTasks }) => {
           <table>
             <thead>
               <tr>
-                <th>name</th>
-                <th>priority</th>
-                <th>deadline</th>
-                <th>action</th>
+                <th>Name</th>
+                <th>Frequency</th>
+                <th>Deadline</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {comingCompletedItems.map((eachTask) => (
-                <tr key={eachTask.id}>
-                  <td>{eachTask.task.taskName}</td>
-                  <td>{eachTask.task.priority}</td>
-                  <td>{eachTask.task.deadline}</td>
+              {comingCompletedItems.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.taskName}</td>
+                  <td>{task.frequency}</td>
+                  <td>{task.deadline}</td>
+                  <td>{task.status}</td> {/* Show task status */}
                   <td>
-                    <button
-                      id="task-remove"
-                      onClick={() => removeTask(eachTask.id)}
-                    >
+                    {/* <button id="task-remove" onClick={() => removeTask(task.id)}>
                       <AiFillDelete size={20} color="#FF6969" />
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}

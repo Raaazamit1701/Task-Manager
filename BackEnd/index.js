@@ -206,12 +206,13 @@ const passport = require('./passport'); // Require the passport config file
 const TodoRoutes = require("./Routes/TodoRoutes");
 const NoteRoutes = require("./Routes/NoteRoutes");
 const TaskRoutes = require("./Routes/TaskRoutes");
+const router =require("./Routes/Routes")
 const PORT = 8080;
 
 const app = express();
 app.use([
   cors({
-    origin: ["http://localhost:3000/","https://task-manager-nndypglmy-raaazamit1701s-projects.vercel.app/"],
+    origin: ["http://localhost:3000","https://task-manager-blond-delta.vercel.app"],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   }),
@@ -223,21 +224,20 @@ const sessionStore = new MongoStore({
   mongoUrl: process.env.MONGO_URL,
   collectionName: 'session',
 });
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: true,
-//     saveUninitialized: true,
-//     store: sessionStore,
-//     cookie: {
-//       maxAge: 1000 * 60 * 60 * 24,
-//     },
-//   })
-// );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    store: sessionStore,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-  app.use(session({store:sessionStore}))
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.json('Hello');
@@ -269,7 +269,7 @@ app.post('/register', async (req, res) => {
 // Local login route
 app.post(
   '/login',
-  passport('local', {
+  passport.authenticate('local', {
     failureRedirect: "",
   }),
   (req, res) => {
@@ -293,6 +293,8 @@ app.get('/getUser', (req, res) => {
     res.status(404).json({ message: 'No user found' });
   }
 });
+
+app.use(router);
 
 // Forgot and reset password
 app.post('/resetPassword/:id/:token', async (req, res) => {
@@ -345,14 +347,14 @@ app.post('/forgotpass', async (req, res) => {
 });
 
 const authenticator = (req, res, next) => {
-    // if (!req.isAuthenticated()) {
-    //   return res.status(401).json({ error: "Login Required" });
-    // }
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Login Required" });
+    }
     next();
   };
-  app.use("/todo",  TodoRoutes);
-  app.use("/note",  NoteRoutes);
-  app.use("/task", TaskRoutes);
+  app.use("/todo", [authenticator, TodoRoutes]);
+  app.use("/note", [authenticator, NoteRoutes]);
+  app.use("/task", [authenticator, TaskRoutes]);
 
 // Start the server
 app.listen(PORT, () => {
