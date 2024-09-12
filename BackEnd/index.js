@@ -344,9 +344,9 @@ app.post('/forgotpass', async (req, res) => {
 });
 
 const authenticator = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Login Required" });
-    }
+    // if (!req.isAuthenticated()) {
+    //   return res.status(401).json({ error: "Login Required" });
+    // }
     next();
   };
   app.use("/todo", [authenticator, TodoRoutes]);
