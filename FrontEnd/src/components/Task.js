@@ -19,7 +19,7 @@ const Task = ({ toast, tasks, setTasks }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
     axios
-      .get(`http://localhost:8080/task/getTask`)
+      .get(`https://task-manager-axhd.onrender.com`)
       .then((res) => {
         let temp = res.data.filter((obj) => obj.done);
         setTasks(res.data);
@@ -53,7 +53,7 @@ const Task = ({ toast, tasks, setTasks }) => {
       done: false,
     };
     axios
-      .post(`http://localhost:8080/task/postTask`, newTask)
+      .post(`https://task-manager-axhd.onrender.com/task/postTask`, newTask)
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
 
@@ -68,7 +68,7 @@ const Task = ({ toast, tasks, setTasks }) => {
     );
     setTasks(updatedTasks);
     axios
-      .patch(`${process.env.REACT_APP_API_URL}/task/updateTask/${id}`, {
+      .patch(`https://task-manager-axhd.onrender.com/task/updateTask/${id}`, {
         done: true,
       })
       .then((res) => console.log(res.data))
@@ -80,7 +80,7 @@ const Task = ({ toast, tasks, setTasks }) => {
 
   const removeTask = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/task/deleteTask/${id}`)
+      .delete(`https://task-manager-axhd.onrender.com/task/deleteTask/${id}`)
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
 

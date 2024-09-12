@@ -5,7 +5,7 @@ import axios from "axios";
 const MainTask = ({ tasks, setTasks }) => {
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/task/getTask`)
+      .get(`https://task-manager-axhd.onrender/task/getTask`)
       .then((res) => {
         setTasks(res.data);
       })

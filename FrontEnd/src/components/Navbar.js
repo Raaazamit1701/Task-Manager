@@ -29,9 +29,10 @@ const Navbar = () => {
   function gototDashboard() {
     navigate("/Home");
   }
+  // http://localhost:3000/Home
   function logOut() {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/logout`)
+      .get(`https://task-manager-axhd.onrender.com/logout`)
       .then((res) => {
         console.log(res);
         navigate("/");

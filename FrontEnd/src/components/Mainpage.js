@@ -42,7 +42,7 @@ export default function Mainpage({ toast, signIn, user }) {
       return;
     }
     axios
-      .post(`http://localhost:8080/login`, userLogin)
+      .post(`https://task-manager-axhd.onrender.com/login`, userLogin)
       .then((result) => {
         console.log(result);
         if (result.data.success) {
@@ -63,7 +63,7 @@ export default function Mainpage({ toast, signIn, user }) {
   const handleRegister = (e) => {
     e.preventDefault();
     axios
-      .post(`http://localhost:8080/register`, users)
+      .post(`https://task-manager-axhd.onrender.com/register`, users)
       .then((result) => {
         console.log(result);
         if (result.data !== "Already Registerd") {
