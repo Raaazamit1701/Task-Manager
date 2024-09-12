@@ -28,7 +28,7 @@ const Profile = ({ tasks }) => {
         setAuthor(quotes.author);
       });
     axios
-      .get(`https://task-manager-axhd.onrender/getUser`)
+      .get(`${process.env.REACT_APP_API_URL}/getUser`)
       .then((res) => {
         // console.log(res.data);
         setUser(res.data);
@@ -38,7 +38,7 @@ const Profile = ({ tasks }) => {
 
   useEffect(() => {
     axios
-      .get(`https://task-manager-axhd.onrender/task/getTask`)
+      .get(`${process.env.REACT_APP_API_URL}/task/getTask`)
       .then((res) => {
         let temp = res.data.filter(
           (obj) =>

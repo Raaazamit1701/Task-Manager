@@ -15,6 +15,8 @@ taskRoutes.get("/getTask", async (req, res) => {
 taskRoutes.post("/postTask", async (req, res) => {
   const { _id } = req.user;
   const newTask = req.body;
+  console.log(_id);
+
   await dataModel
     .findByIdAndUpdate({ _id: _id }, { $push: { tasks: newTask } })
     .catch((err) => {
