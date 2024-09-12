@@ -211,9 +211,9 @@ const PORT = 8080;
 const app = express();
 app.use([
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","https://task-manager-blond-delta.vercel.app"],
     credentials: true,
-    methods: ['GET', 'PUT', 'PATCH', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   }),
   express.json(),
   express.urlencoded({ extended: true }),
@@ -269,7 +269,7 @@ app.post('/register', async (req, res) => {
 app.post(
   '/login',
   passport.authenticate('local', {
-    failureRedirect: process.env.FRONTEND_DOMAIN,
+    failureRedirect: "",
   }),
   (req, res) => {
     res.json({ success: 'Successfully logged in' });
