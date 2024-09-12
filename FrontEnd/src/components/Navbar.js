@@ -17,14 +17,14 @@ const Navbar = () => {
   }, []);
 
   function openTodo() {
-    navigate("/Home/todos");
+    // navigate("/Home/todos");
   }
   function openTask() {
-    navigate("/Home/task");
+    // navigate("/Home/task");
   }
 
   function openNotes() {
-    navigate("/Home/notes");
+    // navigate("/Home/notes");
   }
   function gototDashboard() {
     navigate("/Home");
