@@ -102,7 +102,3 @@ npm start or npm run dev
  ```bash
    git clone https://github.com/Raaazamit1701/Task-Manager
 ```
-
-
-
-

@@ -91,7 +91,7 @@ const Task = ({ toast, tasks, setTasks }) => {
   return (
     <div className="home-body-container" data-aos="zoom-in">
       <header className="search-bar">
-        <h1>Task</h1>
+        <h1>Tasks</h1>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
