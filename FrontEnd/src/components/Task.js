@@ -26,7 +26,7 @@ const Task = ({ toast, tasks, setTasks }) => {
         setCompletedTasks(completed);
       })
       .catch((err) => console.log(err));
-  }, [setTasks]);
+  }, [task]);
 
   // Handle changes in the task input fields
   const handleOnchange = (e) => {
